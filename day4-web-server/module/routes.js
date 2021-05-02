@@ -31,8 +31,8 @@ const path = require('path')
 // 改成同步方式
 function getMime(extname) {
     let data = fs.readFileSync('./data/mime.json')
-    console.log(data, 'mime')
     let mimeObj = JSON.parse(data.toString())
+    console.log(mimeObj[extname])
     return mimeObj[extname]
 }
 
@@ -40,14 +40,12 @@ exports.static = function (req, res, staticPath) {
     const url = new URL(req.url, 'http://127.0.0.1:3000')
     // 获取路径
     let pathname = url.pathname
-
-    console.log(pathname, 'pathname')
-    // 获取后缀
-    let extname = path.extname(pathname)
     // 过滤掉图标
     if (pathname != 'favicon.ico') {
         // 默认跳转到index.html
-        pathname = pathname ? pathname : 'index.html'
+        pathname = pathname === '/' ? '/index.html' : pathname
+        // 获取后缀
+        let extname = path.extname(pathname)
         try {
             let data = fs.readFileSync('./' + staticPath + pathname)
             if (data) {
